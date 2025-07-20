@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(EKFusion2D CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -8,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(PROJECT_SOURCES
     src/main.cpp
     src/ekf/ExtendedKalmanFilter.cpp
-    src/models/VehicleModel.cpp
+    src/models/UnicycleModel.cpp
     src/models/SensorModels.cpp
     src/sim/GroundTruthSimulator.cpp
     src/sim/NoisySensorSimulator.cpp
