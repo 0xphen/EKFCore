@@ -9,7 +9,6 @@
  */
 class IVehicleModel {
 public:
-
   virtual ~IVehicleModel() = default;
 
   /**
@@ -36,23 +35,21 @@ public:
    * @param dt The time step for the prediction.
    * @return The predicted next state vector [x_new, y_new, theta_new].
    */
-  virtual Eigen::Vector3d getNextState(
-      const Eigen::Vector3d &current_state,
-      const Eigen::VectorXd &control_input,
-      double dt) const = 0;
+  virtual Eigen::Vector3d getNextState(const Eigen::Vector3d &current_state,
+                                       const Eigen::VectorXd &control_input,
+                                       double dt) const = 0;
 
-  /**
-   * @brief Computes the state transition Jacobian (Ft) for the motion model.
-   * This linearizes the non-linear motion function around the current state and
-   * control input.
-   * @param current_state The vehicle's current state vector [x, y, theta].
-   * @param control_input The control input vector [v, omega].
-   * @param dt The time step, often required for Jacobian computation.
-   * @return The 3x3 state transition Jacobian matrix (Ft).
-   */
-  virtual Eigen::Matrix3d
-  computeFt(
-      const Eigen::Vector3d &current_state,
-      const Eigen::VectorXd &control_input,
-      double dt) const = 0;
+  // /**
+  //  * @brief Computes the state transition Jacobian (Ft) for the motion model.
+  //  * This linearizes the non-linear motion function around the current state
+  //  and
+  //  * control input.
+  //  * @param current_state The vehicle's current state vector [x, y, theta].
+  //  * @param control_input The control input vector [v, omega].
+  //  * @param dt The time step, often required for Jacobian computation.
+  //  * @return The 3x3 state transition Jacobian matrix (Ft).
+  //  */
+  // virtual Eigen::Matrix3d computeFt(const Eigen::Vector3d &current_state,
+  //                                   const Eigen::VectorXd &control_input,
+  //                                   double dt) const = 0;
 };
