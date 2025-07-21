@@ -36,6 +36,7 @@ UnicycleModel::getNextState(const Eigen::Vector3d &current_state,
     // --- Turning Motion (Non-linear General Case - Analytical Solution) ---
     // Robot moves along a circular arc.
     // Calculations are based on the Instantaneous Center of Curvature (ICC).
+    // Here we use the analytical method.
     double turn_radius = v_k / omega_k;
 
     double icc_global_x = x_k - turn_radius * std::sin(theta_k);
