@@ -34,9 +34,9 @@ public:
    * This provides the perfect, noise-free state for comparison with filter
    * estimates and for generating noisy sensor measurements.
    *
-   * @return The vehicle's current true state vector [x, y, theta].
+   * @return A reference to the vehicle's current true state vector [x, y, theta].
    */
-  Eigen::Vector3d getTrueState() const;
+  const Eigen::Vector3d& getTrueState() const;
 
   /**
    * @brief Advances the vehicle's true state by one time step.
@@ -46,11 +46,11 @@ public:
    * the time step. The calculated state updates the internal 'state_' member
    * variable.
    *
-   * @param perfect_control_input The true, perfect control inputs [v, omega]
+   * @param control_input The true control inputs [v, omega]
    * for this step. These inputs dictate the true motion for the duration 'dt'.
    * @param dt The duration of the time step (delta time) in seconds.
    */
-  void advanceState(const Eigen::VectorXd &perfect_control_input, double dt);
+  void advanceState(const Eigen::VectorXd &control_input, double dt);
 
 private:
   /**

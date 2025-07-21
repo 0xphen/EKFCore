@@ -4,6 +4,7 @@ project(EKFusion2D CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -50,7 +51,8 @@ endif()
 
 
 set(TEST_SOURCES
-    test/test_unicycle_model.cpp 
+    tests/test_unicycle_model.cpp 
+    src/models/UnicycleModel.cpp
 )
 
 if (TEST_SOURCES)
@@ -58,6 +60,7 @@ if (TEST_SOURCES)
     target_link_libraries(ekfusion2d_tests PRIVATE
         gtest_main
         gtest
+        Eigen3::Eigen
     )
 
     target_include_directories(ekfusion2d_tests PRIVATE
