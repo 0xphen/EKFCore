@@ -3,8 +3,10 @@
 #include <Eigen/Dense>
 #include <memory>
 
+#include "../types.hpp"
 #include "models/IVehicleModel.hpp"
 
+namespace sim {
 /**
  * @brief Simulates the true, noise-free state evolution of a 2D vehicle.
  *
@@ -25,8 +27,8 @@ public:
    * @param initial_state The initial true state of the vehicle [x, y, theta] in
    * global coordinates.
    */
-  GroundTruthSimulator(std::unique_ptr<IVehicleModel> model,
-                       const Eigen::Vector3d &initial_state);
+  GroundTruthSimulator(std::unique_ptr<models::IVehicleModel> model,
+                       const StateVector &initial_state);
 
   /**
    * @brief Returns the current true state of the vehicle.
@@ -34,15 +36,16 @@ public:
    * This provides the perfect, noise-free state for comparison with filter
    * estimates and for generating noisy sensor measurements.
    *
-   * @return A reference to the vehicle's current true state vector [x, y, theta].
+   * @return A reference to the vehicle's current true state vector [x, y,
+   * theta].
    */
-  const Eigen::Vector3d& getTrueState() const;
+  const StateVector &getTrueState() const;
 
   /**
    * @brief Advances the vehicle's true state by one time step.
    *
    * This method uses the internally held IVehicleModel to calculate the next
-   * true state based on the provided perfect control inputs and the duration of
+   * true state based on the provided control inputs and the duration of
    * the time step. The calculated state updates the internal 'state_' member
    * variable.
    *
@@ -50,19 +53,20 @@ public:
    * for this step. These inputs dictate the true motion for the duration 'dt'.
    * @param dt The duration of the time step (delta time) in seconds.
    */
-  void advanceState(const Eigen::VectorXd &control_input, double dt);
+  void advanceState(const ControlInput &control_input, double dt);
 
 private:
   /**
    * @brief A smart pointer to the concrete IVehicleModel implementation.
    * It defines the kinematic rules for the vehicle's motion.
    */
-  std::unique_ptr<IVehicleModel> model_;
+  std::unique_ptr<models::IVehicleModel> model_;
 
   /**
    * @brief The current true state of the vehicle.
    * This vector stores the absolute, noise-free position (x, y) and orientation
    * (theta) of the vehicle in global coordinates.
    */
-  Eigen::Vector3d state_;
+  StateVector state_;
 };
+} // namespace sim

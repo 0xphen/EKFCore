@@ -25,7 +25,7 @@ endif()
 
 set(MAIN_PROJECT_SOURCES
     src/main.cpp
-    src/ekf/ExtendedKalmanFilter.cpp
+    src/kalman_filters/ExtendedKalmanFilter.cpp
     src/models/UnicycleModel.cpp
     src/models/SensorModels.cpp
     src/sim/GroundTruthSimulator.cpp

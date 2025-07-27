@@ -1,5 +1,8 @@
 #include <Eigen/Dense>
 
+#include "../types.hpp"
+
+namespace models {
 /**
  * @brief Abstract base class defining the interface for a vehicle motion model.
  *
@@ -35,9 +38,9 @@ public:
    * @param dt The time step for the prediction.
    * @return The predicted next state vector [x_new, y_new, theta_new].
    */
-  virtual Eigen::Vector3d getNextState(const Eigen::Vector3d &current_state,
-                                       const Eigen::VectorXd &control_input,
-                                       double dt) const = 0;
+  virtual StateVector getNextState(const StateVector &state,
+                                   const ControlInput &control_input,
+                                   double dt) const = 0;
 
   // /**
   //  * @brief Computes the state transition Jacobian (Ft) for the motion model.
@@ -49,7 +52,8 @@ public:
   //  * @param dt The time step, often required for Jacobian computation.
   //  * @return The 3x3 state transition Jacobian matrix (Ft).
   //  */
-  // virtual Eigen::Matrix3d computeFt(const Eigen::Vector3d &current_state,
+  // virtual Eigen::Matrix3d computeFt(const StateVector &current_state,
   //                                   const Eigen::VectorXd &control_input,
   //                                   double dt) const = 0;
 };
+} // namespace models

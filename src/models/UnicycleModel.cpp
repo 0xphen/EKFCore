@@ -4,14 +4,18 @@
 
 #include "UnicycleModel.hpp"
 
-int UnicycleModel::getStateDim() const { return 3; }
+constexpr double EPSILON = 1e-6; // Threshold for near-zero angular velocity
 
-int UnicycleModel::getInputDimension() const { return 2; }
+namespace models {
 
-Eigen::Vector3d
-UnicycleModel::getNextState(const Eigen::Vector3d &current_state,
-                            const Eigen::VectorXd &control_input,
-                            double dt) const {
+int models::UnicycleModel::getStateDim() const { return 3; }
+
+int models::UnicycleModel::getInputDimension() const { return 2; }
+
+StateVector
+models::UnicycleModel::getNextState(const StateVector &current_state,
+                                    const ControlInput &control_input,
+                                    double dt) const {
   assert(control_input.size() == 2 &&
          "UnicycleModel expects 2 control inputs (v, omega) for getNextState!");
 
@@ -22,9 +26,7 @@ UnicycleModel::getNextState(const Eigen::Vector3d &current_state,
   double v_k = control_input(0);     // Linear velocity
   double omega_k = control_input(1); // Angular velocity
 
-  const double EPSILON = 1e-6; // Threshold for near-zero angular velocity
-
-  Eigen::Vector3d next_state;
+  StateVector next_state;
 
   if (std::abs(omega_k) < EPSILON) {
     // --- Moving straight (linear approximation) ---
@@ -36,7 +38,6 @@ UnicycleModel::getNextState(const Eigen::Vector3d &current_state,
     // --- Turning Motion (Non-linear General Case - Analytical Solution) ---
     // Robot moves along a circular arc.
     // Calculations are based on the Instantaneous Center of Curvature (ICC).
-    // Here we use the analytical method.
     double turn_radius = v_k / omega_k;
 
     double icc_global_x = x_k - turn_radius * std::sin(theta_k);
@@ -51,3 +52,4 @@ UnicycleModel::getNextState(const Eigen::Vector3d &current_state,
 
   return next_state;
 }
+} // namespace models
