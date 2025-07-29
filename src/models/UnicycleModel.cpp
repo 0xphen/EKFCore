@@ -8,25 +8,25 @@ constexpr double EPSILON = 1e-6; // Threshold for near-zero angular velocity
 
 namespace models {
 
-int models::UnicycleModel::getStateDim() const { return 3; }
+int UnicycleModel::getStateDim() const { return 3; }
 
-int models::UnicycleModel::getInputDimension() const { return 2; }
+int UnicycleModel::getInputDimension() const { return 2; }
 
-StateVector
-models::UnicycleModel::getNextState(const StateVector &current_state,
-                                    const ControlInput &control_input,
-                                    double dt) const {
+common::StateVector
+UnicycleModel::getNextState(const common::StateVector &current_state,
+                            const common::ControlInput &control_input,
+                            double dt) const {
   assert(control_input.size() == 2 &&
          "UnicycleModel expects 2 control inputs (v, omega) for getNextState!");
 
   double x_k = current_state(0);     // x
-  double y_k = current_state(1);     // y
+  double y_k = current_state(1);     // s y
   double theta_k = current_state(2); // theta
 
   double v_k = control_input(0);     // Linear velocity
   double omega_k = control_input(1); // Angular velocity
 
-  StateVector next_state;
+  common::StateVector next_state;
 
   if (std::abs(omega_k) < EPSILON) {
     // --- Moving straight (linear approximation) ---

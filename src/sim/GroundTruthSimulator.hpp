@@ -3,7 +3,6 @@
 #include <Eigen/Dense>
 #include <memory>
 
-#include "../types.hpp"
 #include "models/IVehicleModel.hpp"
 
 namespace sim {
@@ -28,7 +27,7 @@ public:
    * global coordinates.
    */
   GroundTruthSimulator(std::unique_ptr<models::IVehicleModel> model,
-                       const StateVector &initial_state);
+                       const common::StateVector &initial_state);
 
   /**
    * @brief Returns the current true state of the vehicle.
@@ -39,7 +38,7 @@ public:
    * @return A reference to the vehicle's current true state vector [x, y,
    * theta].
    */
-  const StateVector &getTrueState() const;
+  const common::StateVector &getTrueState() const;
 
   /**
    * @brief Advances the vehicle's true state by one time step.
@@ -53,7 +52,7 @@ public:
    * for this step. These inputs dictate the true motion for the duration 'dt'.
    * @param dt The duration of the time step (delta time) in seconds.
    */
-  void advanceState(const ControlInput &control_input, double dt);
+  void advanceState(const common::ControlInput &control_input, double dt);
 
 private:
   /**
@@ -67,6 +66,6 @@ private:
    * This vector stores the absolute, noise-free position (x, y) and orientation
    * (theta) of the vehicle in global coordinates.
    */
-  StateVector state_;
+  common::StateVector state_;
 };
 } // namespace sim

@@ -2,7 +2,6 @@
 
 #include <Eigen/Dense>
 
-#include "../types.hpp"
 #include "IVehicleModel.hpp"
 
 namespace models {
@@ -14,7 +13,7 @@ namespace models {
  * car-like kinematics. It provides the non-linear motion function and its
  * Jacobian for EKF prediction.
  */
-class UnicycleModel : public models::IVehicleModel {
+class UnicycleModel : public IVehicleModel {
 public:
   /**
    * @brief Returns the dimension of the state vector.
@@ -25,7 +24,7 @@ public:
    * 3. theta (orientation/heading): The robot's angular orientation relative to
    * the global X-axis. These three values fully describe the robot's pose in a
    * 2D environment.
-   * @copydoc sim::IVehicleModel::getStateDim
+   * @copydoc IVehicleModel::getStateDim
    */
   int getStateDim() const override;
 
@@ -39,7 +38,7 @@ public:
    * 2. Angular velocity (omega): The rate at which the robot changes its
    * heading (turns). These two inputs are sufficient to control the robot's
    * motion in a 2D plane.
-   * @copydoc sim::IVehicleModel::getInputDimension
+   * @copydoc IVehicleModel::getInputDimension
    */
   int getInputDimension() const override;
 
@@ -49,8 +48,8 @@ public:
    * angular_velocity].
    * @copydoc sim::IVehicleModel::getNextState
    */
-  StateVector getNextState(const StateVector &current_state,
-                           const ControlInput &control_input,
+  common::StateVector getNextState(const common::StateVector &current_state,
+                           const common::ControlInput &control_input,
                            double dt) const override;
 
   // /**

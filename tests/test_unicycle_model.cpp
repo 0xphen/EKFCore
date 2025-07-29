@@ -4,6 +4,6 @@
 #include "models/UnicycleModel.hpp"
 
 TEST(UnicycleModelTest, GetStateDimReturnsCorrectValue) {
-  UnicycleModel model;
+  models::UnicycleModel model;
   ASSERT_EQ(model.getStateDim(), 3);
 }

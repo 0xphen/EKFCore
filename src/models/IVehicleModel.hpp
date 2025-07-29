@@ -1,6 +1,6 @@
 #include <Eigen/Dense>
 
-#include "../types.hpp"
+#include "common/common.hpp"
 
 namespace models {
 /**
@@ -38,8 +38,8 @@ public:
    * @param dt The time step for the prediction.
    * @return The predicted next state vector [x_new, y_new, theta_new].
    */
-  virtual StateVector getNextState(const StateVector &state,
-                                   const ControlInput &control_input,
+  virtual common::StateVector getNextState(const common::StateVector &state,
+                                   const common::ControlInput &control_input,
                                    double dt) const = 0;
 
   // /**
