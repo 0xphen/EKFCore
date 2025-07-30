@@ -38,9 +38,9 @@ public:
    * @param dt The time step for the prediction.
    * @return The predicted next state vector [x_new, y_new, theta_new].
    */
-  virtual common::StateVector getNextState(const common::StateVector &state,
-                                   const common::ControlInput &control_input,
-                                   double dt) const = 0;
+  virtual common::StateVector
+  getNextState(const common::StateVector &state,
+               const common::ControlInput &control_input, double dt) const = 0;
 
   // /**
   //  * @brief Computes the state transition Jacobian (Ft) for the motion model.

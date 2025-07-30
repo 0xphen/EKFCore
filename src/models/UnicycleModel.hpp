@@ -49,8 +49,8 @@ public:
    * @copydoc sim::IVehicleModel::getNextState
    */
   common::StateVector getNextState(const common::StateVector &current_state,
-                           const common::ControlInput &control_input,
-                           double dt) const override;
+                                   const common::ControlInput &control_input,
+                                   double dt) const override;
 
   // /**
   //  * @brief Computes the state transition Jacobian (Ft) for the unicycle

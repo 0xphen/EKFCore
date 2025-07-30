@@ -3,7 +3,8 @@
 
 #include "models/UnicycleModel.hpp"
 
-TEST(UnicycleModelTest, GetStateDimReturnsCorrectValue) {
+TEST(UnicycleModelTest, GetDimensionsReturnsCorrectValue) {
   models::UnicycleModel model;
   ASSERT_EQ(model.getStateDim(), 3);
+  ASSERT_EQ(model.getInputDimension(), 2);
 }
