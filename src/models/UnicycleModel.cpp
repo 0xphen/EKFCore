@@ -1,10 +1,9 @@
 #include <Eigen/Dense>
 #include <cassert>
 #include <cmath>
+#include <iostream>
 
 #include "UnicycleModel.hpp"
-
-constexpr double EPSILON = 1e-6; // Threshold for near-zero angular velocity
 
 namespace models {
 
@@ -28,7 +27,7 @@ UnicycleModel::getNextState(const common::StateVector &current_state,
 
   common::StateVector next_state;
 
-  if (std::abs(omega_k) < EPSILON) {
+  if (std::abs(omega_k) < common::EPSILON) {
     // --- Moving straight (linear approximation) ---
     // Robot moves forward in its current heading direction.
     next_state(0) = x_k + v_k * std::cos(theta_k) * dt;

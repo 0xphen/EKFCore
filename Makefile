@@ -26,4 +26,4 @@ test: build
 
 format:
 	@echo "🎨 Formatting all C++ source and header files recursively..."
-	find src tests -name '*.cpp' -o -name '*.h' | xargs -P $(shell nproc 2>/dev/null || echo 1) clang-format -i
+	find . -type f \( -name "*.cpp" -o -name "*.hpp" -o -name "*.cxx" -o -name "*.h" \) -exec clang-format -i {} +

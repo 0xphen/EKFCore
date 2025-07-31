@@ -6,7 +6,9 @@
 namespace common {
 
 using StateVector = Eigen::Vector3d;
-using ControlInput = Eigen::VectorXd;
+using ControlInput = Eigen::Vector2d;
+
+constexpr double EPSILON = 1e-6; // Threshold for near-zero angular velocity
 
 enum class SensorType { GPS, LIDAR, WHEEL_ODOMETRY };
 

@@ -18,7 +18,10 @@ FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/release-1.12.1.zip
 )
+# For CMake < 3.14, add: set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
+
+include(GoogleTest)  # <-- Required for gtest_discover_tests()
 
 find_package(Eigen3 CONFIG REQUIRED)
 if (Eigen3_FOUND)
@@ -27,6 +30,7 @@ else()
     message(FATAL_ERROR "Eigen3 not found. Please install Eigen3 or adjust CMakeLists.txt to specify its path if vendored.")
 endif()
 
+# ------------------- Core Library -------------------
 add_library(ekfusion2d_models
     src/models/UnicycleModel.cpp
     src/models/SensorModels.cpp
@@ -37,6 +41,7 @@ target_include_directories(ekfusion2d_models PUBLIC
 )
 target_link_libraries(ekfusion2d_models PUBLIC Eigen3::Eigen)
 
+# ------------------- Main Executable -------------------
 set(MAIN_PROJECT_SOURCES
     src/main.cpp
     src/kalman_filters/ExtendedKalmanFilter.cpp
@@ -64,7 +69,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     )
 endif()
 
-# ------------------- TESTS -------------------
+# ------------------- Tests -------------------
 set(TEST_SOURCES
     tests/test_unicycle_model.cpp
 )
@@ -74,7 +79,6 @@ if (TEST_SOURCES)
 
     target_link_libraries(ekfusion2d_tests PRIVATE
         gtest_main
-        gtest
         Eigen3::Eigen
         ekfusion2d_models
     )
@@ -83,9 +87,8 @@ if (TEST_SOURCES)
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     )
 
-    add_test(NAME GTest_List_Tests 
-             COMMAND ekfusion2d_tests --gtest_list_tests)
-
-    add_test(NAME UnicycleModelTest_Specific 
-             COMMAND ekfusion2d_tests --gtest_filter=UnicycleModelTest.GetStateDimReturnsCorrectValue)
+    # Automatic discovery of all test cases
+    gtest_discover_tests(ekfusion2d_tests
+        DISCOVERY_TIMEOUT 10
+    )
 endif()
