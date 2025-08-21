@@ -44,7 +44,7 @@ target_link_libraries(ekfusion2d_models PUBLIC Eigen3::Eigen)
 # ------------------- Main Executable -------------------
 set(MAIN_PROJECT_SOURCES
     src/main.cpp
-    src/kalman_filters/ExtendedKalmanFilter.cpp
+    src/ekf/ExtendedKalmanFilter.cpp
     src/sim/GroundTruthSimulator.cpp
     src/sim/NoisySensorSimulator.cpp
 )
