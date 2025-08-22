@@ -1,18 +1,27 @@
-#pragma once
+// #pragma once
 
-#include "sim/GroundTruthSimulator.hpp"
+// #include <Eigen/Dense>
 
-namespace sim {
-class NoisySensor {
-public:
-  NoisySensor(GroundTruthSimulator &groundTruthSim,
-              const common::StateMatrix &R, const common::StateMatrix &H);
+// #include "common/EkfTraits.hpp"
+// #include "sim/GroundTruthSimulator.hpp"
 
-  common::StateVector simulateMeasurement();
+// namespace sim {
+// template <int M, int N> class NoisySensor {
+// public:
+//   using Traits = common::EKFTraits<M, N>;
 
-private:
-  GroundTruthSimulator &groundTruth_;
-  common::StateMatrix R_;
-  common::StateMatrix H_;
-};
-} // namespace sim
+//   using MeasurementMatrix = typename Traits::MeasurementMatrix;
+//   using CovarianceMatrix = typename Traits::CovarianceMatrix;
+//   using MeasurementVector = typename Traits::MeasureVector;
+
+//   NoisySensor(GroundTruthSimulator &groundTruthSim, const CovarianceMatrix &R,
+//               const MeasurementMatrix &H);
+
+//   MeasurementVector simulateNoisyMeasurement();
+
+// private:
+//   GroundTruthSimulator &groundTruth_;
+//   CovarianceMatrix R_;
+//   MeasurementMatrix H_;
+// };
+// } // namespace sim

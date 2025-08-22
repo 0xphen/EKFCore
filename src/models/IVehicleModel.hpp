@@ -1,59 +1,50 @@
 #include <Eigen/Dense>
 
-#include "common/common.hpp"
-
 namespace models {
 /**
- * @brief Abstract base class defining the interface for a vehicle motion model.
+ * @brief Abstract base class for vehicle motion models used in an EKF.
  *
- * This class serves as a contract for all concrete vehicle models (e.g.,
- * UnicycleModel, KinematicBicycleModel). It declares the essential
- * functionalities that any motion model must provide for use in an EKF.
+ * This class defines the interface for concrete vehicle models (e.g.,
+ * UnicycleModel) by specifying the essential functionalities required
+ * for EKF state prediction and Jacobian computation.
  */
-class IVehicleModel {
+template <int StateSize, int ControlSize> class IVehicleModel {
 public:
+  using StateVector = Eigen::Matrix<double, StateSize, 1>;
+  using ControlVector = Eigen::Matrix<double, ControlSize, 1>;
+  using StateMatrix = Eigen::Matrix<double, StateSize, StateSize>;
+
   virtual ~IVehicleModel() = default;
 
   /**
-   * @brief Returns the dimension of the state vector this model operates on.
-   * @return The integer dimension of the state vector (e.g., 3 for [x, y,
-   * theta]).
-   */
-  virtual int getStateDim() const = 0;
-
-  /**
-   * @brief Returns the dimension of the control input vector this model
-   * expects.
-   * @return The integer dimension of the control input vector (e.g., 2 for [v,
-   * omega]).
-   */
-  virtual int getInputDimension() const = 0;
-
-  /**
-   * @brief Predicts the next state of the vehicle based on the current state
-   * and control input. This implements the non-linear motion function f(X_k,
-   * U_k, dt).
-   * @param current_state The vehicle's current state vector [x, y, theta].
-   * @param control_input The control input vector [v, omega].
+   * @brief Predicts the next state of the vehicle using a non-linear motion
+   * function.
+   *
+   * This method computes f(X_k, U_k, dt) and returns the predicted state.
+   *
+   * @param current_state The vehicle's current state vector.
+   * @param control_input The control input vector for the motion.
    * @param dt The time step for the prediction.
-   * @return The predicted next state vector [x_new, y_new, theta_new].
+   * @return The predicted next state vector.
    */
-  virtual common::StateVector
-  getNextState(const common::StateVector &state,
-               const common::ControlInput &control_input, double dt) const = 0;
+  virtual StateVector getNextState(const StateVector &current_state,
+                                   const ControlVector &control_input,
+                                   double dt) const = 0;
 
-  // /**
-  //  * @brief Computes the state transition Jacobian (Ft) for the motion model.
-  //  * This linearizes the non-linear motion function around the current state
-  //  and
-  //  * control input.
-  //  * @param current_state The vehicle's current state vector [x, y, theta].
-  //  * @param control_input The control input vector [v, omega].
-  //  * @param dt The time step, often required for Jacobian computation.
-  //  * @return The 3x3 state transition Jacobian matrix (Ft).
-  //  */
-  // virtual Eigen::Matrix3d computeFt(const StateVector &current_state,
-  //                                   const Eigen::VectorXd &control_input,
-  //                                   double dt) const = 0;
+  /**
+   * @brief Computes the state transition Jacobian (Ft) for the motion model.
+   *
+   * This matrix linearizes the non-linear motion function around the current
+   * state and control input, which is essential for the EKF's covariance
+   * prediction step.
+   *
+   * @param current_state The vehicle's current state vector.
+   * @param control_input The control input vector for the motion.
+   * @param dt The time step, required for Jacobian computation.
+   * @return The state transition Jacobian (Ft) matrix.
+   */
+  // virtual StateMatrix computeFt(const StateVector &current_state,
+  //                               const ControlVector &control_input,
+  //                               double dt) const = 0;
 };
 } // namespace models

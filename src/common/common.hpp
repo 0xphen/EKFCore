@@ -4,11 +4,6 @@
 #include <cmath>
 
 namespace common {
-
-using StateVector = Eigen::Vector3d;
-using ControlInput = Eigen::Vector2d;
-using StateMatrix = Eigen::Matrix3d;
-
 constexpr double EPSILON = 1e-6; // Threshold for near-zero angular velocity
 
 enum class SensorType { GPS, LIDAR, WHEEL_ODOMETRY, IMU };
@@ -28,15 +23,20 @@ inline double normalizeAngle(double angle) {
 }
 
 /**
- * @brief Generates a random vector with a specified covariance matrix.
+ * @brief Generates a zero-mean Gaussian random vector with a specified
+ * covariance.
  *
- * This function generates a zero-mean Gaussian random vector with a covariance
- * matrix equal to the input 'covarianceMatrix'. It uses Cholesky decomposition
- * to transform a vector of independent random numbers into a correlated vector.
+ * This function uses Cholesky decomposition to transform a vector of
+ * independent standard random variables into a correlated random vector with
+ * the statistical properties defined by 'covarianceMatrix'. It is
+ * essential for simulating realistic sensor or process noise.
  *
  * @param covarianceMatrix The desired covariance matrix for the output vector.
- * Must be a symmetric, positive-definite matrix.
- * @return A random StateVector with the specified covariance.
+ * This matrix must be symmetric and positive-definite.
+ * @return An Eigen::Vector of dimension M x 1 with a mean of zero and the
+ * specified covariance.
  */
-StateVector generateCorrelatedNoise(const StateMatrix &covarianceMatrix);
+template <int M>
+Eigen::Matrix<double, M, 1>
+generateCorrelatedNoise(const Eigen::Matrix<double, M, M> &covarianceMatrix);
 } // namespace common

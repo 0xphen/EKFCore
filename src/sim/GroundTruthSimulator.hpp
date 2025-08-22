@@ -7,27 +7,34 @@
 
 namespace sim {
 /**
- * @brief Simulates the true, noise-free state evolution of a 2D vehicle.
+ * @brief Simulates the true, noisy state evolution of a 2D vehicle.
  *
  * This class maintains the absolute "ground truth" state of the vehicle
  * over time. It uses a specific IVehicleModel implementation to advance
- * this state based on perfect control inputs, serving as the unobservable
- * reality for validating the Extended Kalman Filter.
+ * this state based on perfect control inputs and models real-world
+ * disturbances with process noise.
  */
-class GroundTruthSimulator {
+template <int StateSize, int ControlSize> class GroundTruthSimulator {
 public:
+  using StateVector =
+      typename models::IVehicleModel<StateSize, ControlSize>::StateVector;
+  using ControlInput =
+      typename models::IVehicleModel<StateSize, ControlSize>::ControlVector;
+  using ProcessNoiseMatrix = Eigen::Matrix<double, StateSize, StateSize>;
+
   /**
    * @brief Constructs a GroundTruthSimulator instance.
    *
    * @param model A std::unique_ptr to a concrete vehicle motion model (e.g.,
    * UnicycleModel). Ownership of the model is transferred to this simulator.
-   * This allows the simulator to use polymorphic behavior for state
-   * advancement.
    * @param initial_state The initial true state of the vehicle [x, y, theta] in
    * global coordinates.
+   * @param Q The process noise covariance matrix that models unpredicted
+   * disturbances.
    */
-  GroundTruthSimulator(std::unique_ptr<models::IVehicleModel> model,
-                       const common::StateVector &initial_state);
+  GroundTruthSimulator(
+      std::unique_ptr<models::IVehicleModel<StateSize, ControlSize>> model,
+      const StateVector &initial_state, const ProcessNoiseMatrix &Q);
 
   /**
    * @brief Returns the current true state of the vehicle.
@@ -38,34 +45,42 @@ public:
    * @return A reference to the vehicle's current true state vector [x, y,
    * theta].
    */
-  const common::StateVector &getTrueState() const;
+  const StateVector &getPerfectState() const;
+
+  const StateVector &getNoisyState() const;
 
   /**
-   * @brief Advances the vehicle's true state by one time step.
+   * @brief Advances the vehicle's true state by one time step, including
+   * process noise.
    *
    * This method uses the internally held IVehicleModel to calculate the next
-   * true state based on the provided control inputs and the duration of
-   * the time step. The calculated state updates the internal 'state_' member
-   * variable.
+   * state and adds a random process noise vector to it, simulating real-world
+   * disturbances.
    *
    * @param control_input The true control inputs [v, omega]
    * for this step. These inputs dictate the true motion for the duration 'dt'.
    * @param dt The duration of the time step (delta time) in seconds.
    */
-  void advanceState(const common::ControlInput &control_input, double dt);
+  void advanceState(const ControlInput &control_input, double dt);
 
 private:
   /**
    * @brief A smart pointer to the concrete IVehicleModel implementation.
    * It defines the kinematic rules for the vehicle's motion.
    */
-  std::unique_ptr<models::IVehicleModel> model_;
+  std::unique_ptr<models::IVehicleModel<StateSize, ControlSize>> model_;
+
+  // The current true state of the vehicle, including process noise.
+  StateVector noisy_state_;
+
+  // The ideal, noise-free state used for validation and comparison.
+  StateVector perfect_state_;
 
   /**
-   * @brief The current true state of the vehicle.
-   * This vector stores the absolute, noise-free position (x, y) and orientation
-   * (theta) of the vehicle in global coordinates.
+   * @brief The process noise covariance matrix, Q.
+   * This matrix models the uncertainty and correlations of the unpredicted
+   * disturbances that affect the vehicle's motion.
    */
-  common::StateVector state_;
+  ProcessNoiseMatrix Q_;
 };
 } // namespace sim

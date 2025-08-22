@@ -1,25 +1,43 @@
 #include <Eigen/Dense>
+#include <cassert>
 #include <memory>
 
-#include "sim/GroundTruthSimulator.hpp"
+#include "GroundTruthSimulator.hpp"
+#include "common/common.hpp"
 
 namespace sim {
-GroundTruthSimulator::GroundTruthSimulator(
-    std::unique_ptr<models::IVehicleModel> model,
-    const common::StateVector &initial_state)
-    : model_(std::move(model)), state_(initial_state) {
+template <int StateSize, int ControlSize>
+GroundTruthSimulator<StateSize, ControlSize>::GroundTruthSimulator(
+    std::unique_ptr<models::IVehicleModel<StateSize, ControlSize>> model,
+    const StateVector &initial_state, const ProcessNoiseMatrix &Q)
+    : model_(std::move(model)), noisy_state_(initial_state),
+      perfect_state_(initial_state), Q_(Q) {
   if (!model_) {
     throw std::invalid_argument(
         "GroundTruthSimulator requires a valid IVehicleModel.");
   }
 }
 
-const common::StateVector &GroundTruthSimulator::getTrueState() const {
-  return state_;
+template <int StateSize, int ControlSize>
+const typename GroundTruthSimulator<StateSize, ControlSize>::StateVector &
+GroundTruthSimulator<StateSize, ControlSize>::getPerfectState() const {
+  return perfect_state_;
 }
 
-void GroundTruthSimulator::advanceState(
-    const common::ControlInput &control_input, double dt) {
-  state_ = model_->getNextState(state_, control_input, dt);
+template <int StateSize, int ControlSize>
+const typename GroundTruthSimulator<StateSize, ControlSize>::StateVector &
+GroundTruthSimulator<StateSize, ControlSize>::getNoisyState() const {
+  return noisy_state_;
+}
+
+template <int StateSize, int ControlSize>
+void GroundTruthSimulator<StateSize, ControlSize>::advanceState(
+    const ControlInput &control_input, double dt) {
+  perfect_state_ = model_->getNextState(perfect_state_, control_input, dt);
+
+  StateVector process_noise =
+      common::generateCorrelatedNoise<StateSize>(Q_);
+
+  noisy_state_ = perfect_state_ + process_noise;
 }
 } // namespace sim
