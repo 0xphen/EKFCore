@@ -18,11 +18,12 @@ template <int StateSize, int ControlSize> class GroundTruthSimulator {
 public:
   using StateVector =
       typename models::IVehicle<StateSize, ControlSize>::StateVector;
-  
+
   using ControlInput =
       typename models::IVehicle<StateSize, ControlSize>::ControlVector;
 
-  using ProcessNoiseMatrix = typename models::IVehicle<StateSize, StateSize>::StateMatrix;
+  using ProcessNoiseMatrix =
+      typename models::IVehicle<StateSize, StateSize>::StateMatrix;
 
   /**
    * @brief Constructs a GroundTruthSimulator instance.

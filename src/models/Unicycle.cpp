@@ -9,8 +9,7 @@ namespace models {
 template <int StateSize, int ControlSize>
 typename Unicycle<StateSize, ControlSize>::StateVector
 Unicycle<StateSize, ControlSize>::getNextState(
-    const typename Unicycle<StateSize, ControlSize>::StateVector
-        &current_state,
+    const typename Unicycle<StateSize, ControlSize>::StateVector &current_state,
     const typename Unicycle<StateSize, ControlSize>::ControlVector
         &control_input,
     double dt) const {
@@ -46,29 +45,29 @@ Unicycle<StateSize, ControlSize>::getNextState(
   return next_state;
 }
 
-template <int StateSize, int ControlSize>
-typename Unicycle<StateSize, ControlSize>::StateMatrix
-Unicycle<StateSize, ControlSize>::computeFt(
-    const typename Unicycle<StateSize, ControlSize>::StateVector
-        &current_state,
-    const typename Unicycle<StateSize, ControlSize>::ControlVector
-        &control_input,
-    double dt) const {
-  // Enforce correct dimensions for the Unicycle model at compile time.
-  // static_assert(StateSize == 3, "UnicycleModel requires StateSize == 3.");
-  // static_assert(ControlSize == 2, "UnicycleModel requires ControlSize
-  // == 2.");
+// template <int StateSize, int ControlSize>
+// typename Unicycle<StateSize, ControlSize>::StateMatrix
+// Unicycle<StateSize, ControlSize>::computeFt(
+//     const typename Unicycle<StateSize, ControlSize>::StateVector
+//         &current_state,
+//     const typename Unicycle<StateSize, ControlSize>::ControlVector
+//         &control_input,
+//     double dt) const {
+//   // Enforce correct dimensions for the Unicycle model at compile time.
+//   // static_assert(StateSize == 3, "UnicycleModel requires StateSize == 3.");
+//   // static_assert(ControlSize == 2, "UnicycleModel requires ControlSize
+//   // == 2.");
 
-  double theta_k = current_state(2);
-  double v_k = control_input(0);
+//   double theta_k = current_state(2);
+//   double v_k = control_input(0);
 
-  // typename UnicycleModel<StateSize, ControlSize>::StateMatrix F;
-  // F << 1, 0, -v_k * std::sin(theta_k) * dt,
-  //      0, 1, v_k * std::cos(theta_k) * dt,
-  //      0, 0, 1;
+//   // typename UnicycleModel<StateSize, ControlSize>::StateMatrix F;
+//   // F << 1, 0, -v_k * std::sin(theta_k) * dt,
+//   //      0, 1, v_k * std::cos(theta_k) * dt,
+//   //      0, 0, 1;
 
-  // return F;
-}
+//   // return F;
+// }
 
 // Explicit template instantiation for common vehicle models
 template class Unicycle<3, 2>;

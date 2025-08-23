@@ -3,12 +3,26 @@
 #include <Eigen/Dense>
 
 namespace common {
-// M is the number of sensor measurements (e.g., 3 for IMU)
-// N is the number of state variables (e.g., 3 for x, y, theta)
-template <int M, int N> 
-struct VehicleTypes {
-  using MeasurementVector = Eigen::Matrix<double, M, 1>;
-  using MeasurementMatrix = Eigen::Matrix<double, M, N>;
-  using MeasurementCovarianceMatrix = Eigen::Matrix<double, M, M>;
+/**
+ * @brief Defines type aliases for a vehicle's state and control components.
+ * @tparam StateSize The dimension of the state vector.
+ * @tparam ControlSize The dimension of the control input vector.
+ */
+template <int StateSize, int ControlSize> struct VehicleTypes {
+  using StateVector = Eigen::Matrix<double, StateSize, 1>;
+  using ControlVector = Eigen::Matrix<double, ControlSize, 1>;
+  using StateMatrix = Eigen::Matrix<double, StateSize, StateSize>;
+};
+
+/**
+ * @brief Defines type aliases for a sensor's measurements.
+ * @tparam MeasurementSize The dimension of the measurement vector.
+ * @tparam StateSize The dimension of the state vector.
+ */
+template <int MeasurementSize, int StateSize> struct SensorTypes {
+  using MeasurementVector = Eigen::Matrix<double, MeasurementSize, 1>;
+  using MeasurementMatrix = Eigen::Matrix<double, MeasurementSize, StateSize>;
+  using CovarianceMatrix =
+      Eigen::Matrix<double, MeasurementSize, MeasurementSize>;
 };
 } // namespace common

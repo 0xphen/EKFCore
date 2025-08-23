@@ -2,27 +2,27 @@
 #include <cmath>
 #include <gtest/gtest.h>
 
+#include "common/EkfTraits.hpp"
 #include "common/common.hpp"
 #include "models/Unicycle.hpp"
 
 static constexpr int StateSize = 3;
 static constexpr int ControlSize = 2;
 
-using StateVector = models::IVehicle<StateSize, ControlSize>::StateVector;
+using StateVector = common::VehicleTypes<StateSize, ControlSize>::StateVector;
 using ControlInput =
-    models::IVehicle<StateSize, ControlSize>::ControlVector;
+    common::VehicleTypes<StateSize, ControlSize>::ControlVector;
 
 TEST(UnicycleModelTest, GetDimensionsReturnsCorrectValue) {
-  ASSERT_EQ(
-      static_cast<int>(
-          models::Unicycle<StateSize,
-                                ControlSize>::StateVector::SizeAtCompileTime),
-      3);
+  ASSERT_EQ(static_cast<int>(
+                models::Unicycle<StateSize,
+                                 ControlSize>::StateVector::SizeAtCompileTime),
+            3);
 
   ASSERT_EQ(
       static_cast<int>(
           models::Unicycle<StateSize,
-                                ControlSize>::ControlVector::SizeAtCompileTime),
+                           ControlSize>::ControlVector::SizeAtCompileTime),
       2);
 };
 

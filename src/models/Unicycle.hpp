@@ -14,10 +14,11 @@ namespace models {
 template <int StateSize, int ControlSize>
 class Unicycle : public IVehicle<StateSize, ControlSize> {
 public:
-  using Base = IVehicle<StateSize, ControlSize>;
-  using typename Base::ControlVector;
-  using typename Base::StateMatrix;
-  using typename Base::StateVector;
+  using Traits = IVehicle<StateSize, ControlSize>;
+
+  using typename Traits::ControlVector;
+  using typename Traits::StateMatrix;
+  using typename Traits::StateVector;
 
   /**
    * @brief Predicts the next state using the unicycle motion equations.
@@ -31,8 +32,8 @@ public:
    * @brief Computes the state transition Jacobian (Ft) for the unicycle model.
    * @copydoc IVehicleModel::computeFt
    */
-  StateMatrix computeFt(const StateVector &current_state,
-                        const ControlVector &control_input,
-                        double dt) const override;
+  // StateMatrix computeFt(const StateVector &current_state,
+  //                       const ControlVector &control_input,
+  //                       double dt) const override;
 };
 } // namespace models

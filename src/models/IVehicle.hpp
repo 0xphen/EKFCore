@@ -1,5 +1,7 @@
 #include <Eigen/Dense>
 
+#include "common/EkfTraits.hpp"
+
 namespace models {
 /**
  * @brief Abstract base class for vehicle motion models used in an EKF.
@@ -10,9 +12,11 @@ namespace models {
  */
 template <int StateSize, int ControlSize> class IVehicle {
 public:
-  using StateVector = Eigen::Matrix<double, StateSize, 1>;
-  using ControlVector = Eigen::Matrix<double, ControlSize, 1>;
-  using StateMatrix = Eigen::Matrix<double, StateSize, StateSize>;
+  using Traits = common::VehicleTypes<StateSize, ControlSize>;
+
+  using StateVector = typename Traits::StateVector;
+  using ControlVector = typename Traits::ControlVector;
+  using StateMatrix = typename Traits::StateMatrix;
 
   virtual ~IVehicle() = default;
 
@@ -43,8 +47,8 @@ public:
    * @param dt The time step, required for Jacobian computation.
    * @return The state transition Jacobian (Ft) matrix.
    */
-  virtual StateMatrix computeFt(const StateVector &current_state,
-                                const ControlVector &control_input,
-                                double dt) const = 0;
+  // virtual StateMatrix computeFt(const StateVector &current_state,
+  //                               const ControlVector &control_input,
+  //                               double dt) const = 0;
 };
 } // namespace models
