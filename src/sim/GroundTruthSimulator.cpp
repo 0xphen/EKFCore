@@ -33,10 +33,13 @@ GroundTruthSimulator<StateSize, ControlSize>::getNoisyState() const {
 template <int StateSize, int ControlSize>
 void GroundTruthSimulator<StateSize, ControlSize>::advanceState(
     const ControlInput &control_input, double dt) {
+  // Advance the perfect state using the noise-free motion model.
   perfect_state_ = model_->getNextState(perfect_state_, control_input, dt);
 
+  // Generate process noise from the process noise covariance matrix Q_.
   StateVector process_noise = common::generateCorrelatedNoise<StateSize>(Q_);
 
+  // Advance the noisy state by adding process noise to the perfect state.
   noisy_state_ = perfect_state_ + process_noise;
 }
 } // namespace sim

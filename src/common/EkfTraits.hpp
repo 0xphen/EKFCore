@@ -4,7 +4,7 @@
 
 namespace common {
 /**
- * @brief Defines type aliases for a vehicle's state and control components.
+ * @brief Defines type aliases for a robot's state and control components.
  * @tparam StateSize The dimension of the state vector.
  * @tparam ControlSize The dimension of the control input vector.
  */
