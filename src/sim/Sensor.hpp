@@ -39,6 +39,10 @@ public:
   MeasurementVector
   getMeasurement(const Eigen::Matrix<double, StateSize, 1> &true_state) const;
 
+  const MeasurementMatrix &getMeasurementMatrix() const;
+
+  const CovarianceMatrix &getCovarianceMatrix() const;
+
 private:
   /**
    * @brief Measurement noise covariance matrix, R.
