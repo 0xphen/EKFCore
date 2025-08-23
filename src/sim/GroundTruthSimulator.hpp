@@ -3,7 +3,7 @@
 #include <Eigen/Dense>
 #include <memory>
 
-#include "models/IVehicleModel.hpp"
+#include "models/IVehicle.hpp"
 
 namespace sim {
 /**
@@ -17,10 +17,12 @@ namespace sim {
 template <int StateSize, int ControlSize> class GroundTruthSimulator {
 public:
   using StateVector =
-      typename models::IVehicleModel<StateSize, ControlSize>::StateVector;
+      typename models::IVehicle<StateSize, ControlSize>::StateVector;
+  
   using ControlInput =
-      typename models::IVehicleModel<StateSize, ControlSize>::ControlVector;
-  using ProcessNoiseMatrix = Eigen::Matrix<double, StateSize, StateSize>;
+      typename models::IVehicle<StateSize, ControlSize>::ControlVector;
+
+  using ProcessNoiseMatrix = typename models::IVehicle<StateSize, StateSize>::StateMatrix;
 
   /**
    * @brief Constructs a GroundTruthSimulator instance.
@@ -33,7 +35,7 @@ public:
    * disturbances.
    */
   GroundTruthSimulator(
-      std::unique_ptr<models::IVehicleModel<StateSize, ControlSize>> model,
+      std::unique_ptr<models::IVehicle<StateSize, ControlSize>> model,
       const StateVector &initial_state, const ProcessNoiseMatrix &Q);
 
   /**
@@ -68,7 +70,7 @@ private:
    * @brief A smart pointer to the concrete IVehicleModel implementation.
    * It defines the kinematic rules for the vehicle's motion.
    */
-  std::unique_ptr<models::IVehicleModel<StateSize, ControlSize>> model_;
+  std::unique_ptr<models::IVehicle<StateSize, ControlSize>> model_;
 
   // The current true state of the vehicle, including process noise.
   StateVector noisy_state_;

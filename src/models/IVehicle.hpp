@@ -8,13 +8,13 @@ namespace models {
  * UnicycleModel) by specifying the essential functionalities required
  * for EKF state prediction and Jacobian computation.
  */
-template <int StateSize, int ControlSize> class IVehicleModel {
+template <int StateSize, int ControlSize> class IVehicle {
 public:
   using StateVector = Eigen::Matrix<double, StateSize, 1>;
   using ControlVector = Eigen::Matrix<double, ControlSize, 1>;
   using StateMatrix = Eigen::Matrix<double, StateSize, StateSize>;
 
-  virtual ~IVehicleModel() = default;
+  virtual ~IVehicle() = default;
 
   /**
    * @brief Predicts the next state of the vehicle using a non-linear motion
@@ -43,8 +43,8 @@ public:
    * @param dt The time step, required for Jacobian computation.
    * @return The state transition Jacobian (Ft) matrix.
    */
-  // virtual StateMatrix computeFt(const StateVector &current_state,
-  //                               const ControlVector &control_input,
-  //                               double dt) const = 0;
+  virtual StateMatrix computeFt(const StateVector &current_state,
+                                const ControlVector &control_input,
+                                double dt) const = 0;
 };
 } // namespace models

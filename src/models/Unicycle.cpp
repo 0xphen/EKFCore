@@ -2,16 +2,16 @@
 #include <cmath>
 #include <iostream>
 
+#include "Unicycle.hpp"
 #include "common/common.hpp"
-#include "UnicycleModel.hpp"
 
 namespace models {
 template <int StateSize, int ControlSize>
-typename UnicycleModel<StateSize, ControlSize>::StateVector
-UnicycleModel<StateSize, ControlSize>::getNextState(
-    const typename UnicycleModel<StateSize, ControlSize>::StateVector
+typename Unicycle<StateSize, ControlSize>::StateVector
+Unicycle<StateSize, ControlSize>::getNextState(
+    const typename Unicycle<StateSize, ControlSize>::StateVector
         &current_state,
-    const typename UnicycleModel<StateSize, ControlSize>::ControlVector
+    const typename Unicycle<StateSize, ControlSize>::ControlVector
         &control_input,
     double dt) const {
   static_assert(StateSize == 3, "UnicycleModel requires StateSize == 3.");
@@ -24,7 +24,7 @@ UnicycleModel<StateSize, ControlSize>::getNextState(
   double v_k = control_input(0);
   double omega_k = control_input(1);
 
-  typename UnicycleModel<StateSize, ControlSize>::StateVector next_state;
+  typename Unicycle<StateSize, ControlSize>::StateVector next_state;
 
   if (std::abs(omega_k) < common::EPSILON) {
     // --- Moving straight ---
@@ -46,28 +46,30 @@ UnicycleModel<StateSize, ControlSize>::getNextState(
   return next_state;
 }
 
-// template <int StateSize, int ControlSize>
-// typename UnicycleModel<StateSize, ControlSize>::StateMatrix
-// UnicycleModel<StateSize, ControlSize>::computeFt(
-//     const typename UnicycleModel<StateSize, ControlSize>::StateVector
-//     &current_state, const typename UnicycleModel<StateSize,
-//     ControlSize>::ControlVector &control_input, double dt) const {
-//   // Enforce correct dimensions for the Unicycle model at compile time.
-//   static_assert(StateSize == 3, "UnicycleModel requires StateSize == 3.");
-//   static_assert(ControlSize == 2, "UnicycleModel requires ControlSize
-//   == 2.");
+template <int StateSize, int ControlSize>
+typename Unicycle<StateSize, ControlSize>::StateMatrix
+Unicycle<StateSize, ControlSize>::computeFt(
+    const typename Unicycle<StateSize, ControlSize>::StateVector
+        &current_state,
+    const typename Unicycle<StateSize, ControlSize>::ControlVector
+        &control_input,
+    double dt) const {
+  // Enforce correct dimensions for the Unicycle model at compile time.
+  // static_assert(StateSize == 3, "UnicycleModel requires StateSize == 3.");
+  // static_assert(ControlSize == 2, "UnicycleModel requires ControlSize
+  // == 2.");
 
-//   double theta_k = current_state(2);
-//   double v_k = control_input(0);
+  double theta_k = current_state(2);
+  double v_k = control_input(0);
 
-//   typename UnicycleModel<StateSize, ControlSize>::StateMatrix F;
-//   F << 1, 0, -v_k * std::sin(theta_k) * dt,
-//        0, 1, v_k * std::cos(theta_k) * dt,
-//        0, 0, 1;
+  // typename UnicycleModel<StateSize, ControlSize>::StateMatrix F;
+  // F << 1, 0, -v_k * std::sin(theta_k) * dt,
+  //      0, 1, v_k * std::cos(theta_k) * dt,
+  //      0, 0, 1;
 
-//   return F;
-// }
+  // return F;
+}
 
 // Explicit template instantiation for common vehicle models
-template class UnicycleModel<3, 2>;
+template class Unicycle<3, 2>;
 } // namespace models

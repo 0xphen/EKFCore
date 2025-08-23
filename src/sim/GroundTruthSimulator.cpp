@@ -8,7 +8,7 @@
 namespace sim {
 template <int StateSize, int ControlSize>
 GroundTruthSimulator<StateSize, ControlSize>::GroundTruthSimulator(
-    std::unique_ptr<models::IVehicleModel<StateSize, ControlSize>> model,
+    std::unique_ptr<models::IVehicle<StateSize, ControlSize>> model,
     const StateVector &initial_state, const ProcessNoiseMatrix &Q)
     : model_(std::move(model)), noisy_state_(initial_state),
       perfect_state_(initial_state), Q_(Q) {
@@ -35,8 +35,7 @@ void GroundTruthSimulator<StateSize, ControlSize>::advanceState(
     const ControlInput &control_input, double dt) {
   perfect_state_ = model_->getNextState(perfect_state_, control_input, dt);
 
-  StateVector process_noise =
-      common::generateCorrelatedNoise<StateSize>(Q_);
+  StateVector process_noise = common::generateCorrelatedNoise<StateSize>(Q_);
 
   noisy_state_ = perfect_state_ + process_noise;
 }

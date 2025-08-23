@@ -32,8 +32,7 @@ endif()
 
 # ------------------- Core Library -------------------
 add_library(ekfusion2d_models
-    src/models/UnicycleModel.cpp
-    src/models/SensorModels.cpp
+    src/models/Unicycle.cpp
 )
 
 target_include_directories(ekfusion2d_models PUBLIC
@@ -46,7 +45,7 @@ set(MAIN_PROJECT_SOURCES
     src/main.cpp
     src/ekf/ExtendedKalmanFilter.cpp
     src/sim/GroundTruthSimulator.cpp
-    src/sim/NoisySensorSimulator.cpp
+    src/sim/Sensor.cpp
 )
 
 add_executable(ekfusion2d_sim ${MAIN_PROJECT_SOURCES})

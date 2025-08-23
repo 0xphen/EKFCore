@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IVehicleModel.hpp"
+#include "IVehicle.hpp"
 
 namespace models {
 /**
@@ -12,9 +12,9 @@ namespace models {
  * Jacobian for EKF prediction.
  */
 template <int StateSize, int ControlSize>
-class UnicycleModel : public IVehicleModel<StateSize, ControlSize> {
+class Unicycle : public IVehicle<StateSize, ControlSize> {
 public:
-  using Base = IVehicleModel<StateSize, ControlSize>;
+  using Base = IVehicle<StateSize, ControlSize>;
   using typename Base::ControlVector;
   using typename Base::StateMatrix;
   using typename Base::StateVector;
@@ -31,8 +31,8 @@ public:
    * @brief Computes the state transition Jacobian (Ft) for the unicycle model.
    * @copydoc IVehicleModel::computeFt
    */
-  // StateMatrix computeFt(const StateVector &current_state,
-  //                       const ControlVector &control_input,
-  //                       double dt) const override;
+  StateMatrix computeFt(const StateVector &current_state,
+                        const ControlVector &control_input,
+                        double dt) const override;
 };
 } // namespace models

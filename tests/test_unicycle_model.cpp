@@ -2,21 +2,29 @@
 #include <cmath>
 #include <gtest/gtest.h>
 
-#include "models/UnicycleModel.hpp"
 #include "common/common.hpp"
+#include "models/Unicycle.hpp"
 
 static constexpr int StateSize = 3;
 static constexpr int ControlSize = 2;
 
-using StateVector = models::IVehicleModel<StateSize, ControlSize>::StateVector;
-using ControlInput = models::IVehicleModel<StateSize, ControlSize>::ControlVector;
+using StateVector = models::IVehicle<StateSize, ControlSize>::StateVector;
+using ControlInput =
+    models::IVehicle<StateSize, ControlSize>::ControlVector;
 
 TEST(UnicycleModelTest, GetDimensionsReturnsCorrectValue) {
-  ASSERT_EQ(static_cast<int>(models::UnicycleModel<StateSize, ControlSize>::StateVector::SizeAtCompileTime), 3);
+  ASSERT_EQ(
+      static_cast<int>(
+          models::Unicycle<StateSize,
+                                ControlSize>::StateVector::SizeAtCompileTime),
+      3);
 
-  ASSERT_EQ(static_cast<int>(models::UnicycleModel<StateSize, ControlSize>::ControlVector::SizeAtCompileTime), 2);
+  ASSERT_EQ(
+      static_cast<int>(
+          models::Unicycle<StateSize,
+                                ControlSize>::ControlVector::SizeAtCompileTime),
+      2);
 };
-
 
 struct GetNextStateTestParams {
   StateVector initial_state;
@@ -26,13 +34,13 @@ struct GetNextStateTestParams {
   std::string test_name;
 };
 
-class UnicycleModelGetNextStateTest
+class UnicycleGetNextStateTest
     : public testing::TestWithParam<GetNextStateTestParams> {
 protected:
-  models::UnicycleModel<StateSize, ControlSize> model;
+  models::Unicycle<StateSize, ControlSize> model;
 };
 
-TEST_P(UnicycleModelGetNextStateTest, ComputesCorrectNextState) {
+TEST_P(UnicycleGetNextStateTest, ComputesCorrectNextState) {
   GetNextStateTestParams params = GetParam();
   StateVector result =
       model.getNextState(params.initial_state, params.control_input, params.dt);
@@ -54,7 +62,7 @@ TEST_P(UnicycleModelGetNextStateTest, ComputesCorrectNextState) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    UnicycleModelKinematicsTests, UnicycleModelGetNextStateTest,
+    UnicycleKinematicsTests, UnicycleGetNextStateTest,
     testing::Values(
         // Test Case 1: Straight Motion (v=10, omega=0, dt=5)
         GetNextStateTestParams{
