@@ -3,7 +3,7 @@
 #include "Eigen/Dense"
 
 #include "common/EkfTraits.hpp"
-#include "sim/INoiseGenerator.hpp"
+#include "common/INoiseGenerator.hpp"
 
 namespace sensor {
 /**
@@ -23,7 +23,7 @@ public:
   using MeasurementMatrix = typename Traits::MeasurementMatrix;
   using CovarianceMatrix = typename Traits::CovarianceMatrix;
 
-  using NoiseGeneratorType = sim::INoiseGenerator<MeasurementSize>;
+  using NoiseGeneratorType = common::INoiseGenerator<MeasurementSize>;
 
   /**
    * @brief Constructs a generic Sensor object.

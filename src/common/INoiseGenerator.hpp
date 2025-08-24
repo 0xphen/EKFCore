@@ -3,7 +3,7 @@
 
 #include <Eigen/Dense>
 
-namespace sim {
+namespace common {
 /**
  * @brief Interface for generating random noise with a specified covariance.
  *
@@ -14,7 +14,9 @@ namespace sim {
 template <int VectorSize> class INoiseGenerator {
 public:
   virtual ~INoiseGenerator() = default;
+
   virtual Eigen::Matrix<double, VectorSize, 1>
-  generate(const Eigen::Matrix<double, VectorSize, VectorSize> &covariance) = 0;
+  generate(const Eigen::Matrix<double, VectorSize, VectorSize> &covariance)
+      const = 0;
 };
-} // namespace sim
+} // namespace common

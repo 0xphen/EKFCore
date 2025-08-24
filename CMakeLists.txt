@@ -18,10 +18,9 @@ FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/release-1.12.1.zip
 )
-# For CMake < 3.14, add: set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-include(GoogleTest)  # <-- Required for gtest_discover_tests()
+include(GoogleTest)
 
 find_package(Eigen3 CONFIG REQUIRED)
 if (Eigen3_FOUND)
@@ -31,32 +30,31 @@ else()
 endif()
 
 # ------------------- Core Library -------------------
-add_library(ekfusion2d_models
+# A single library for all core, reusable components
+add_library(ekfusion2d_lib
     src/models/Unicycle.cpp
-)
-
-target_include_directories(ekfusion2d_models PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
-target_link_libraries(ekfusion2d_models PUBLIC Eigen3::Eigen)
-
-# ------------------- Main Executable -------------------
-set(MAIN_PROJECT_SOURCES
-    src/main.cpp
     src/ekf/ExtendedKalmanFilter.cpp
     src/sim/GroundTruthSimulator.cpp
     src/sim/Sensor.cpp
+    src/common/NoiseGenerator.cpp
 )
 
-add_executable(ekfusion2d_sim ${MAIN_PROJECT_SOURCES})
+target_include_directories(ekfusion2d_lib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+target_link_libraries(ekfusion2d_lib PUBLIC Eigen3::Eigen)
+
+# ------------------- Main Executable -------------------
+add_executable(ekfusion2d_sim
+    src/main.cpp
+)
 
 target_include_directories(ekfusion2d_sim PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 target_link_libraries(ekfusion2d_sim PRIVATE
-    Eigen3::Eigen
-    ekfusion2d_models
+    ekfusion2d_lib
 )
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -72,6 +70,7 @@ endif()
 set(TEST_SOURCES
     tests/test_unicycle_model.cpp
     tests/test_generate_correlated_noise.cpp
+    tests/test_ground_truth_simulator.cpp
 )
 
 if (TEST_SOURCES)
@@ -79,15 +78,16 @@ if (TEST_SOURCES)
 
     target_link_libraries(ekfusion2d_tests PRIVATE
         gtest_main
+        gmock
         Eigen3::Eigen
-        ekfusion2d_models
+        ekfusion2d_lib
     )
 
     target_include_directories(ekfusion2d_tests PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${gtest_SOURCE_DIR}/googlemock/include
     )
 
-    # Automatic discovery of all test cases
     gtest_discover_tests(ekfusion2d_tests
         DISCOVERY_TIMEOUT 10
     )

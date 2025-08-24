@@ -1,5 +1,6 @@
 #include <Eigen/Dense>
 #include <cassert>
+#include <iostream>
 #include <memory>
 
 #include "GroundTruthSimulator.hpp"
@@ -34,14 +35,13 @@ GroundTruthSimulator<StateSize, ControlSize>::getNoisyState() const {
 template <int StateSize, int ControlSize>
 void GroundTruthSimulator<StateSize, ControlSize>::advanceState(
     const ControlInput &control_input, double dt) {
-  // Advance the perfect state using the noise-free motion model.
-  x_true = model_->getNextState(x_true, control_input, dt);
+  StateVector next_state_from_noisy_model =
+      model_->getNextState(x_noisy, control_input, dt);
 
-  // Generate process noise from the process noise covariance matrix Q_.
   StateVector process_noise = noise_generator_.generate(Q_);
-  // StateVector process_noise = common::generateCorrelatedNoise<StateSize>(Q_);
-
-  // Advance the noisy state by adding process noise to the perfect state.
-  x_noisy = x_true + process_noise;
+  x_noisy = next_state_from_noisy_model + process_noise;
+  x_true = model_->getNextState(x_true, control_input, dt);
 }
+
+template class sim::GroundTruthSimulator<3, 2>;
 } // namespace sim

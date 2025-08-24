@@ -3,30 +3,29 @@
 #include <Eigen/Dense>
 #include <memory>
 
+#include "common/INoiseGenerator.hpp"
 #include "models/IVehicle.hpp"
-#include "sim/INoiseGenerator.hpp"
 
 namespace sim {
 /**
- * @brief Simulates the true, noisy state evolution of a 2D vehicle.
+ * @brief Simulates the true state evolution of a vehicle for EKF validation.
  *
- * This class maintains the absolute "ground truth" state of the vehicle
- * over time. It uses a specific IVehicleModel implementation to advance
- * this state based on perfect control inputs and models real-world
- * disturbances with process noise.
+ * This class generates and maintains the vehicle's true (noisy) state and its
+ * ideal (noise-free) path, providing a benchmark for the filter's performance.
+ *
+ * @tparam StateSize The dimension of the state vector.
+ * @tparam ControlSize The dimension of the control input vector.
  */
 template <int StateSize, int ControlSize> class GroundTruthSimulator {
 public:
   using StateVector =
       typename common::VehicleTypes<StateSize, ControlSize>::StateVector;
-
   using ControlInput =
       typename common::VehicleTypes<StateSize, ControlSize>::ControlVector;
-
   using ProcessNoiseMatrix =
       typename common::VehicleTypes<StateSize, StateSize>::StateMatrix;
 
-  using NoiseGeneratorType = sim::INoiseGenerator<StateSize>;
+  using NoiseGeneratorType = common::INoiseGenerator<StateSize>;
 
   /**
    * @brief Constructs a GroundTruthSimulator instance.
@@ -34,8 +33,7 @@ public:
    * @param model A unique_ptr to the concrete vehicle motion model.
    * @param initial_state The initial true state of the vehicle.
    * @param Q The process noise covariance matrix.
-   * @param noise_generator The noise generator implementation used to simulate
-   * noise.
+   * @param noise_generator A noise generator implementation.
    */
   GroundTruthSimulator(
       std::unique_ptr<models::IVehicle<StateSize, ControlSize>> model,
@@ -43,52 +41,49 @@ public:
       const NoiseGeneratorType &noise_generator);
 
   /**
-   * @brief Returns the current true state of the vehicle.
-   *
-   * This provides the perfect, noise-free state for comparison with filter
-   * estimates and for generating noisy sensor measurements.
-   *
-   * @return A reference to the vehicle's current true state vector [x, y,
-   * theta].
+   * @brief Returns the ideal, noise-free state.
    */
   const StateVector &getPerfectState() const;
 
+  /**
+   * @brief Returns the current true state, including process noise.
+   */
   const StateVector &getNoisyState() const;
 
   /**
-   * @brief Advances the vehicle's true state by one time step, including
-   * process noise.
+   * @brief Advances the vehicle's state by one time step.
    *
-   * This method uses the internally held IVehicleModel to calculate the next
-   * state and adds a random process noise vector to it, simulating real-world
-   * disturbances.
+   * This method applies the motion model and adds process noise to the state.
    *
-   * @param control_input The true control inputs [v, omega]
-   * for this step. These inputs dictate the true motion for the duration 'dt'.
-   * @param dt The duration of the time step (delta time) in seconds.
+   * @param control_input The control inputs for this step.
+   * @param dt The duration of the time step.
    */
   void advanceState(const ControlInput &control_input, double dt);
 
 private:
   /**
-   * @brief A smart pointer to the concrete IVehicleModel implementation.
-   * It defines the kinematic rules for the vehicle's motion.
+   * @brief The concrete IVehicleModel implementation.
    */
   std::unique_ptr<models::IVehicle<StateSize, ControlSize>> model_;
 
-  // The current true state of the vehicle, including process noise.
+  /**
+   * @brief The current true state, including process noise.
+   */
   StateVector x_noisy;
 
-  // The ideal, noise-free state used for validation and comparison.
+  /**
+   * @brief The ideal, noise-free state used for validation.
+   */
   StateVector x_true;
 
   /**
    * @brief The process noise covariance matrix, Q.
-   * This matrix models the uncertainty and correlations of the unpredicted
-   * disturbances that affect the vehicle's motion.
    */
   ProcessNoiseMatrix Q_;
 
-  NoiseGeneratorType &noise_generator_;
+  /**
+   * @brief The injected noise generator dependency.
+   */
+  const NoiseGeneratorType &noise_generator_;
 };
 } // namespace sim
