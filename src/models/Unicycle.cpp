@@ -45,30 +45,33 @@ Unicycle<StateSize, ControlSize>::getNextState(
   return next_state;
 }
 
-// template <int StateSize, int ControlSize>
-// typename Unicycle<StateSize, ControlSize>::StateMatrix
-// Unicycle<StateSize, ControlSize>::computeFt(
-//     const typename Unicycle<StateSize, ControlSize>::StateVector
-//         &current_state,
-//     const typename Unicycle<StateSize, ControlSize>::ControlVector
-//         &control_input,
-//     double dt) const {
-//   // Enforce correct dimensions for the Unicycle model at compile time.
-//   // static_assert(StateSize == 3, "UnicycleModel requires StateSize == 3.");
-//   // static_assert(ControlSize == 2, "UnicycleModel requires ControlSize
-//   // == 2.");
+template <int StateSize, int ControlSize>
+typename Unicycle<StateSize, ControlSize>::StateMatrix
+Unicycle<StateSize, ControlSize>::computeFt(
+    const typename Unicycle<StateSize, ControlSize>::StateVector &current_state,
+    const typename Unicycle<StateSize, ControlSize>::ControlVector
+        &control_input,
+    double dt) const {
+  double theta_k = current_state(2);
+  double v_k = control_input(0);     // Linear velocity
+  double omega_k = control_input(1); // Angular velocity
 
-//   double theta_k = current_state(2);
-//   double v_k = control_input(0);
+  StateMatrix F;
+  if (std::abs(omega_k) < common::EPSILON) {
+    F << 1.0, 0.0, -v_k * dt * std::sin(theta_k), 0.0, 1.0,
+        v_k * dt * std::cos(theta_k), 0.0, 0.0, 1.0;
+  } else {
+    double turn_radius = v_k / omega_k;
+    double theta_plus_omega_dt = theta_k + omega_k * dt;
 
-//   // typename UnicycleModel<StateSize, ControlSize>::StateMatrix F;
-//   // F << 1, 0, -v_k * std::sin(theta_k) * dt,
-//   //      0, 1, v_k * std::cos(theta_k) * dt,
-//   //      0, 0, 1;
+    F << 1.0, 0.0,
+        turn_radius * (std::cos(theta_plus_omega_dt) - std::cos(theta_k)), 0.0,
+        1.0, turn_radius * (std::sin(theta_plus_omega_dt) - std::sin(theta_k)),
+        0.0, 0.0, 1.0;
+  }
 
-//   // return F;
-// }
+  return F;
+}
 
-// Explicit template instantiation for common vehicle models
 template class Unicycle<3, 2>;
 } // namespace models

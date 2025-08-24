@@ -32,8 +32,8 @@ public:
    * @brief Computes the state transition Jacobian (Ft) for the unicycle model.
    * @copydoc IVehicleModel::computeFt
    */
-  // StateMatrix computeFt(const StateVector &current_state,
-  //                       const ControlVector &control_input,
-  //                       double dt) const override;
+  StateMatrix computeFt(const StateVector &current_state,
+                        const ControlVector &control_input,
+                        double dt) const override;
 };
 } // namespace models

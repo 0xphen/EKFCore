@@ -1,6 +1,7 @@
 #include <Eigen/Dense>
 #include <cmath>
 #include <gtest/gtest.h>
+#include <iostream>
 
 #include "common/EkfTraits.hpp"
 #include "common/common.hpp"
@@ -12,8 +13,16 @@ static constexpr int ControlSize = 2;
 using StateVector = common::VehicleTypes<StateSize, ControlSize>::StateVector;
 using ControlInput =
     common::VehicleTypes<StateSize, ControlSize>::ControlVector;
+using StateMatrix = common::VehicleTypes<StateSize, ControlSize>::StateMatrix;
 
-TEST(UnicycleModelTest, GetDimensionsReturnsCorrectValue) {
+class UnicycleModelTest : public testing::Test {
+protected:
+  models::Unicycle<StateSize, ControlSize> model;
+  double dt = 2.0;
+  double epsilon = 1e-4;
+};
+
+TEST_F(UnicycleModelTest, GetDimensionsReturnsCorrectValue) {
   ASSERT_EQ(static_cast<int>(
                 models::Unicycle<StateSize,
                                  ControlSize>::StateVector::SizeAtCompileTime),
@@ -26,6 +35,55 @@ TEST(UnicycleModelTest, GetDimensionsReturnsCorrectValue) {
       2);
 };
 
+TEST_F(UnicycleModelTest, ComputeJacobian_StraightMotion) {
+  StateVector X;
+  X << 1.0, 2.0, M_PI / 2.0; // theta = 1.5708
+
+  ControlInput U;
+  U << 10.0, 0.0; // v = 10, omega = 0
+
+  StateMatrix F = model.computeFt(X, U, dt);
+
+  double expected_F_0_2 =
+      -U(0) * dt * std::sin(X(2)); // -10 * 2 * sin(1.5708) = -20.0
+  double expected_F_1_2 =
+      U(0) * dt * std::cos(X(2)); // 10 * 2 * cos(1.5708) = 0.0
+
+  ASSERT_NEAR(F(0, 0), 1.0, epsilon);
+  ASSERT_NEAR(F(1, 1), 1.0, epsilon);
+  ASSERT_NEAR(F(2, 2), 1.0, epsilon);
+  ASSERT_NEAR(F(0, 2), expected_F_0_2, epsilon);
+  ASSERT_NEAR(F(1, 2), expected_F_1_2, epsilon);
+}
+
+TEST_F(UnicycleModelTest, ComputeJacobian_TurningMotion) {
+  StateVector X;
+  X << 1.0, 2.0, M_PI / 2.0; // theta = 1.5708
+
+  ControlInput U;
+  U << 10.0, 1.0; // v = 10, omega = 1
+
+  StateMatrix F = model.computeFt(X, U, dt);
+
+  double v_k = U(0);
+  double omega_k = U(1);
+  double turn_radius = v_k / omega_k;
+  double theta_k = X(2);
+  double theta_plus_omega_dt = theta_k + omega_k * dt;
+
+  double expected_F_0_2 =
+      turn_radius * (std::cos(theta_plus_omega_dt) - std::cos(theta_k));
+  double expected_F_1_2 =
+      turn_radius * (std::sin(theta_plus_omega_dt) - std::sin(theta_k));
+
+  ASSERT_NEAR(F(0, 0), 1.0, epsilon);
+  ASSERT_NEAR(F(1, 1), 1.0, epsilon);
+  ASSERT_NEAR(F(2, 2), 1.0, epsilon);
+  ASSERT_NEAR(F(0, 2), expected_F_0_2, epsilon);
+  ASSERT_NEAR(F(1, 2), expected_F_1_2, epsilon);
+}
+
+// Parametrized test for getNextState
 struct GetNextStateTestParams {
   StateVector initial_state;
   ControlInput control_input;

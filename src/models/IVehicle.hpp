@@ -49,8 +49,8 @@ public:
    * @param dt The time step, required for Jacobian computation.
    * @return The state transition Jacobian (Ft) matrix.
    */
-  // virtual StateMatrix computeFt(const StateVector &current_state,
-  //                               const ControlVector &control_input,
-  //                               double dt) const = 0;
+  virtual StateMatrix computeFt(const StateVector &current_state,
+                                const ControlVector &control_input,
+                                double dt) const = 0;
 };
 } // namespace models
