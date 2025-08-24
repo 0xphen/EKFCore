@@ -45,10 +45,6 @@ TEST_P(UnicycleGetNextStateTest, ComputesCorrectNextState) {
   StateVector result =
       model.getNextState(params.initial_state, params.control_input, params.dt);
 
-  std::cout << "X: " << result(0) << std::endl;
-  std::cout << "Y: " << result(1) << std::endl;
-  std::cout << "Z: " << result(2) << std::endl;
-
   double epsilon = 1e-4;
   EXPECT_NEAR(result(0), params.expected_final_state(0), epsilon)
       << "X mismatch for " << params.test_name;

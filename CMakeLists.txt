@@ -71,6 +71,7 @@ endif()
 # ------------------- Tests -------------------
 set(TEST_SOURCES
     tests/test_unicycle_model.cpp
+    tests/test_generate_correlated_noise.cpp
 )
 
 if (TEST_SOURCES)

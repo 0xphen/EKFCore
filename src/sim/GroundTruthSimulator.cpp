@@ -10,8 +10,7 @@ template <int StateSize, int ControlSize>
 GroundTruthSimulator<StateSize, ControlSize>::GroundTruthSimulator(
     std::unique_ptr<models::IVehicle<StateSize, ControlSize>> model,
     const StateVector &initial_state, const ProcessNoiseMatrix &Q)
-    : model_(std::move(model)), noisy_state_(initial_state),
-      perfect_state_(initial_state), Q_(Q) {
+    : model_(std::move(model)), x_true(initial_state), Q_(Q) {
   if (!model_) {
     throw std::invalid_argument(
         "GroundTruthSimulator requires a valid IVehicleModel.");
@@ -21,25 +20,25 @@ GroundTruthSimulator<StateSize, ControlSize>::GroundTruthSimulator(
 template <int StateSize, int ControlSize>
 const typename GroundTruthSimulator<StateSize, ControlSize>::StateVector &
 GroundTruthSimulator<StateSize, ControlSize>::getPerfectState() const {
-  return perfect_state_;
+  return x_true;
 }
 
 template <int StateSize, int ControlSize>
 const typename GroundTruthSimulator<StateSize, ControlSize>::StateVector &
 GroundTruthSimulator<StateSize, ControlSize>::getNoisyState() const {
-  return noisy_state_;
+  return x_noisy;
 }
 
 template <int StateSize, int ControlSize>
 void GroundTruthSimulator<StateSize, ControlSize>::advanceState(
     const ControlInput &control_input, double dt) {
   // Advance the perfect state using the noise-free motion model.
-  perfect_state_ = model_->getNextState(perfect_state_, control_input, dt);
+  x_true = model_->getNextState(x_true, control_input, dt);
 
   // Generate process noise from the process noise covariance matrix Q_.
   StateVector process_noise = common::generateCorrelatedNoise<StateSize>(Q_);
 
   // Advance the noisy state by adding process noise to the perfect state.
-  noisy_state_ = perfect_state_ + process_noise;
+  x_noisy = x_true + process_noise;
 }
 } // namespace sim

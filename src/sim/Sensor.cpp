@@ -23,14 +23,14 @@ Sensor<MeasurementSize, StateSize>::getMeasurement(
 }
 
 template <int MeasurementSize, int StateSize>
-const typename Sensor<MeasurementSize, StateSize>::MeasurementMatrix&
-    Sensor<MeasurementSize, StateSize>::getMeasurementMatrix() const {
+const typename Sensor<MeasurementSize, StateSize>::MeasurementMatrix &
+Sensor<MeasurementSize, StateSize>::getMeasurementMatrix() const {
   return H_;
 }
 
 template <int MeasurementSize, int StateSize>
-const typename Sensor<MeasurementSize, StateSize>::CovarianceMatrix&
-    Sensor<MeasurementSize, StateSize>::getCovarianceMatrix() const {
+const typename Sensor<MeasurementSize, StateSize>::CovarianceMatrix &
+Sensor<MeasurementSize, StateSize>::getCovarianceMatrix() const {
   return R_;
 }
 

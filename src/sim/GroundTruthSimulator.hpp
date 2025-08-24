@@ -74,10 +74,10 @@ private:
   std::unique_ptr<models::IVehicle<StateSize, ControlSize>> model_;
 
   // The current true state of the vehicle, including process noise.
-  StateVector noisy_state_;
+  StateVector x_noisy;
 
   // The ideal, noise-free state used for validation and comparison.
-  StateVector perfect_state_;
+  StateVector x_true;
 
   /**
    * @brief The process noise covariance matrix, Q.
