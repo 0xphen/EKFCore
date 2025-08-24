@@ -35,12 +35,16 @@ GroundTruthSimulator<StateSize, ControlSize>::getNoisyState() const {
 template <int StateSize, int ControlSize>
 void GroundTruthSimulator<StateSize, ControlSize>::advanceState(
     const ControlInput &control_input, double dt) {
+  StateVector next_perfect_state =
+      model_->getNextState(x_true, control_input, dt);
+
   StateVector next_state_from_noisy_model =
       model_->getNextState(x_noisy, control_input, dt);
 
   StateVector process_noise = noise_generator_.generate(Q_);
+
+  x_true = next_perfect_state;
   x_noisy = next_state_from_noisy_model + process_noise;
-  x_true = model_->getNextState(x_true, control_input, dt);
 }
 
 template class sim::GroundTruthSimulator<3, 2>;

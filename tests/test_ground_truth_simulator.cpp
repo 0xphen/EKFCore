@@ -5,15 +5,9 @@
 #include "common/INoiseGenerator.hpp"
 #include "models/Unicycle.hpp"
 #include "sim/GroundTruthSimulator.hpp"
+#include "test_helper.hpp"
 
 using namespace testing;
-
-template <int M> class MockNoiseGenerator : public common::INoiseGenerator<M> {
-public:
-  MOCK_METHOD((Eigen::Matrix<double, M, 1>), generate,
-              ((const Eigen::Matrix<double, M, M> &covariance)),
-              (const, override));
-};
 
 TEST(GroundTruthTest, AdvanceState_AddsCorrectProcessNoise) {
   static constexpr int state_size = 3;
@@ -30,7 +24,7 @@ TEST(GroundTruthTest, AdvanceState_AddsCorrectProcessNoise) {
   Eigen::Vector3d expected_noise;
   expected_noise << 0.1, 0.2, 0.3;
 
-  MockNoiseGenerator<3> mock_noise_generator;
+  testing::MockNoiseGenerator<3> mock_noise_generator;
 
   EXPECT_CALL(mock_noise_generator, generate(A<const Eigen::Matrix3d &>()))
       .WillOnce(Return(expected_noise));
