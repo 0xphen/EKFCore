@@ -5,7 +5,7 @@
 #include "common/EkfTraits.hpp"
 #include "common/INoiseGenerator.hpp"
 
-namespace sensor {
+namespace sim {
 /**
  * @brief Represents a generic sensor model for state estimation.
  *
@@ -59,6 +59,6 @@ private:
    */
   MeasurementMatrix H_;
 
-  NoiseGeneratorType &noise_generator_;
+  const NoiseGeneratorType &noise_generator_;
 };
-} // namespace sensor
+} // namespace sim

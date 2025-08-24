@@ -71,6 +71,7 @@ set(TEST_SOURCES
     tests/test_unicycle_model.cpp
     tests/test_generate_correlated_noise.cpp
     tests/test_ground_truth_simulator.cpp
+    tests/test_sensor.cpp
     tests/test_helper.hpp
 )
 

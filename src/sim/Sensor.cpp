@@ -3,7 +3,7 @@
 
 #include "common/common.hpp"
 
-namespace sensor {
+namespace sim {
 template <int MeasurementSize, int StateSize>
 Sensor<MeasurementSize, StateSize>::Sensor(
     const typename Sensor<MeasurementSize, StateSize>::CovarianceMatrix &R,
@@ -16,7 +16,7 @@ typename Sensor<MeasurementSize, StateSize>::MeasurementVector
 Sensor<MeasurementSize, StateSize>::getMeasurement(
     const Eigen::Matrix<double, StateSize, 1> &true_state) const {
   // Generate a random noise vector with the specified covariance
-  MeasurementVector noise = noise_generator_.generate<MeasurementSize>(R_);
+  MeasurementVector noise = noise_generator_.generate(R_);
 
   return H_ * true_state +
          noise; // perfect measurement (Hx) plus the generated noise
@@ -34,4 +34,6 @@ Sensor<MeasurementSize, StateSize>::getCovarianceMatrix() const {
   return R_;
 }
 
-} // namespace sensor
+template class sim::Sensor<2, 3>;
+template class sim::Sensor<3, 3>;
+} // namespace sim

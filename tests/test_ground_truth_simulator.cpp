@@ -1,4 +1,3 @@
-#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include <memory>
 
@@ -24,7 +23,7 @@ TEST(GroundTruthTest, AdvanceState_AddsCorrectProcessNoise) {
   Eigen::Vector3d expected_noise;
   expected_noise << 0.1, 0.2, 0.3;
 
-  testing::MockNoiseGenerator<3> mock_noise_generator;
+  testing::MockNoiseGenerator<state_size> mock_noise_generator;
 
   EXPECT_CALL(mock_noise_generator, generate(A<const Eigen::Matrix3d &>()))
       .WillOnce(Return(expected_noise));
@@ -34,7 +33,8 @@ TEST(GroundTruthTest, AdvanceState_AddsCorrectProcessNoise) {
   Q << 0.001, 0.0, 0.0, 0.0, 0.001, 0.0, 0.0, 0.0, 0.005;
 
   models::Unicycle<state_size, control_size> unicycle_model;
-  auto expected_perfect_state = unicycle_model.getNextState(initial_state, U, dt);
+  auto expected_perfect_state =
+      unicycle_model.getNextState(initial_state, U, dt);
   auto expected_final_noisy_state = expected_perfect_state + expected_noise;
 
   auto unicycle_ptr =
