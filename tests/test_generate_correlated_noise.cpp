@@ -34,12 +34,13 @@ TEST(NoiseGeneratorTest, GeneratesCorrectStatisticalProperties) {
 
   // Calculate the sample covariance matrix from the generated noise.
   Eigen::Matrix3d covariance_sum = Eigen::Matrix3d::Zero();
-  for (const auto& sample: noise_samples) {
+  for (const auto &sample : noise_samples) {
     Eigen::Vector3d centered_sample = sample - samples_mean;
     covariance_sum += centered_sample * centered_sample.transpose();
   }
 
-  Eigen::Matrix3d samples_covariance =covariance_sum/static_cast<double>(num_runs - 1);
+  Eigen::Matrix3d samples_covariance =
+      covariance_sum / static_cast<double>(num_runs - 1);
 
   // Assert that the calculated covariance matrix matches the input.
   double cov_tolerance = 1e-2;
@@ -65,9 +66,8 @@ TEST(NoiseGeneratorTest, ThrowsExceptionForNonPositiveDefiniteMatrix) {
   // A non-positive-definite matrix. The negative diagonal element makes
   // the matrix invalid for Cholesky decomposition.
   Eigen::Matrix3d non_positive_definite_matrix;
-  non_positive_definite_matrix << 0.04, 0.0, 0.0,
-                                  0.0, -0.04, 0.0,
-                                  0.0, 0.0, 0.0025;
+  non_positive_definite_matrix << 0.04, 0.0, 0.0, 0.0, -0.04, 0.0, 0.0, 0.0,
+      0.0025;
 
   ASSERT_THROW(common::generateCorrelatedNoise<3>(non_positive_definite_matrix),
                std::runtime_error);

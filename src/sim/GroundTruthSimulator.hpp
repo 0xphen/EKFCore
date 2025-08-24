@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "models/IVehicle.hpp"
+#include "sim/INoiseGenerator.hpp"
 
 namespace sim {
 /**
@@ -25,19 +26,21 @@ public:
   using ProcessNoiseMatrix =
       typename common::VehicleTypes<StateSize, StateSize>::StateMatrix;
 
+  using NoiseGeneratorType = sim::INoiseGenerator<StateSize>;
+
   /**
    * @brief Constructs a GroundTruthSimulator instance.
    *
-   * @param model A std::unique_ptr to a concrete vehicle motion model (e.g.,
-   * UnicycleModel). Ownership of the model is transferred to this simulator.
-   * @param initial_state The initial true state of the vehicle [x, y, theta] in
-   * global coordinates.
-   * @param Q The process noise covariance matrix that models unpredicted
-   * disturbances.
+   * @param model A unique_ptr to the concrete vehicle motion model.
+   * @param initial_state The initial true state of the vehicle.
+   * @param Q The process noise covariance matrix.
+   * @param noise_generator The noise generator implementation used to simulate
+   * noise.
    */
   GroundTruthSimulator(
       std::unique_ptr<models::IVehicle<StateSize, ControlSize>> model,
-      const StateVector &initial_state, const ProcessNoiseMatrix &Q);
+      const StateVector &initial_state, const ProcessNoiseMatrix &Q,
+      const NoiseGeneratorType &noise_generator);
 
   /**
    * @brief Returns the current true state of the vehicle.
@@ -85,5 +88,7 @@ private:
    * disturbances that affect the vehicle's motion.
    */
   ProcessNoiseMatrix Q_;
+
+  NoiseGeneratorType &noise_generator_;
 };
 } // namespace sim

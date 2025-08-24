@@ -3,6 +3,7 @@
 #include "Eigen/Dense"
 
 #include "common/EkfTraits.hpp"
+#include "sim/INoiseGenerator.hpp"
 
 namespace sensor {
 /**
@@ -22,13 +23,18 @@ public:
   using MeasurementMatrix = typename Traits::MeasurementMatrix;
   using CovarianceMatrix = typename Traits::CovarianceMatrix;
 
+  using NoiseGeneratorType = sim::INoiseGenerator<MeasurementSize>;
+
   /**
    * @brief Constructs a generic Sensor object.
    *
    * @param R The measurement noise covariance matrix.
    * @param H The measurement matrix that maps state to measurement space.
+   * @param noise_generator The noise generator implementation used to simulate
+   * noise.
    */
-  Sensor(const CovarianceMatrix &R, const MeasurementMatrix &H);
+  Sensor(const CovarianceMatrix &R, const MeasurementMatrix &H,
+         const NoiseGeneratorType &noise_generator);
 
   /**
    * @brief Returns a noisy measurement from the sensor.
@@ -52,5 +58,7 @@ private:
    * @brief Measurement matrix (Jacobian), H.
    */
   MeasurementMatrix H_;
+
+  NoiseGeneratorType &noise_generator_;
 };
 } // namespace sensor
